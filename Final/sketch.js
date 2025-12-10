@@ -60,7 +60,12 @@ function draw(){
   image(stage, - stageV , 0);
   //rect(width/2, rise, 75, 95);
   fill(50, 150, 50)
-  rect(0, height/1.5 - 16, width, 95); 
+  rect(0, height/1.5 - 16, width, height);
+  rect(-stageV + 1000, 425, 75, 95);
+  rect(-stageV + 100, 425, 75, 95);
+  rect(-stageV + 1500, 425, 75, 95);
+  rect(-stageV + 2000, 425, 75, 95);
+  rect(-stageV + 1880, 425, 75, 95); 
   moveStage()
   print(stageV);
   if(!keyIsPressed && facingRight ){
@@ -108,7 +113,7 @@ function moveStage(){
      if (frameCount % time === 0) {
     currentFrame = (currentFrame + 1) % run.length;
   }
-    if (right > 585){
+    if (right > 584){
     stageV = stageV+1
     }
   }
@@ -119,7 +124,7 @@ function moveStage(){
     left ++
   }
   if(keyIsDown(UP_ARROW) === true){
-    rise = 330
+    rise = 280
     if(facingLeft === true){
       image(runto[newFrame], left, rise - 75, 200, 200)
     }

@@ -1,18 +1,24 @@
 let stage
 let stageV = 1
-let rise = 370 //height/2
-let gravity = 0.5
-let fall = false
-let jumpH = 330
-let landH = 370
+let rise = 400 //height/2
+let left = 570
+let right = 585
+let leftS = 560
+let rightS = 600
 let run = [];
 let currentFrame = 0
+let newFrame = 0
 let time = 6
 let runto = [];
-
+let standR = [];
+let standL = [];
+let facingLeft = false
+let facingRight = true
 
 function preload() {
   stage = loadImage('Volnutt/Placeholder.jpg');
+  standR[0] = loadImage('Volnutt/Volnutt0001.png');
+  standL[0] = loadImage('Volnutt/VolnuttL1.png');
   run[0] = loadImage('Volnutt/Volnutt0003.png');
   run[1] = loadImage('Volnutt/Volnutt0004.png');
   run[2] = loadImage('Volnutt/Volnutt0005.png');
@@ -45,20 +51,29 @@ function preload() {
 }
 function setup() {
   createCanvas(1280, 740);
-
+  stIntro = createGraphics(1280, 740);
+  stIntro.background(0);
 }
 
 function draw(){
   background(0);
   image(stage, - stageV , 0);
-  rect(width/2, rise, 75, 95); 
+  //rect(width/2, rise, 75, 95);
+  fill(50, 150, 50)
+  rect(0, height/1.5 - 16, width, 95); 
   moveStage()
   print(stageV);
-  if (run.length > 0) {
-    image(run[currentFrame], width/2 - 55, rise - 75, 200, 200)
+  if(!keyIsPressed && facingRight ){
+    image(standR[0], rightS, rise - 75, 200, 200);   
   }
-  if (frameCount % time === 0) {
-    currentFrame = (currentFrame + 1) % run.length;
+  if(!keyIsPressed && facingRight && stageV < 0){
+    image(standR[0], rightS, rise - 75, 200, 200);   
+  }
+  if(!keyIsPressed && facingLeft){
+    image(standL[0], leftS, rise - 75, 200, 200)
+  }
+    if(!keyIsPressed && facingLeft && stageV < 0){
+    image(standL[0], leftS, rise - 75, 200, 200)
   }
   
 }
@@ -67,18 +82,54 @@ function moveStage(){
 
   if(keyIsDown(LEFT_ARROW) === true) {
      stageV --
+     facingLeft = true
+     facingRight = false
+     if (runto.length > 0) {
+    image(runto[newFrame], left, rise - 75, 200, 200)
+    }
+     if (frameCount % time === 0) {
+    newFrame = (newFrame + 1) % runto.length;
+    }
+  if(keyIsDown(LEFT_ARROW) === true && stageV < 0) {  
+    stageV = 0
+    left --
+    leftS --
+    rightS --
+    right --
+  }
+
   }  
   if(keyIsDown(RIGHT_ARROW) === true){
-    //stageV +=1
-    //stageV ++
-     stageV = stageV+1
+     facingLeft = false
+     facingRight = true
+     if (run.length > 0) {
+    image(run[currentFrame], right, rise - 75, 200, 200)
+  }     
+     if (frameCount % time === 0) {
+    currentFrame = (currentFrame + 1) % run.length;
+  }
+    if (right > 585){
+    stageV = stageV+1
+    }
+  }
+  if(keyIsDown(RIGHT_ARROW) === true && stageV === 0){
+    right ++
+    rightS ++
+    leftS ++
+    left ++
   }
   if(keyIsDown(UP_ARROW) === true){
     rise = 330
+    if(facingLeft === true){
+      image(runto[newFrame], left, rise - 75, 200, 200)
+    }
+    if(facingRight === true){
+      image(run[currentFrame], right, rise - 75, 200, 200)
+    }
   }
 
-  if(rise<370){
-    rise ++
+    if(rise<400){
+     rise ++
   }
   
   //if(keyisDown(RIGHT_ARROW) === true && keyisDown(UP_ARROW) === true){  }

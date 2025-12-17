@@ -1,10 +1,12 @@
+let platform
+let obstacle
 let stage
 let stageV = 1 // -stageV + 634 = 0 ??
 let adj = 634
 let oSet = -77
 let rise = 400 //height/2
 let jump = 280
-let fall
+let floor
 let left = 570
 let right = 585
 let leftS = 560
@@ -16,6 +18,9 @@ let time = 6
 let runto = [];
 let standR = [];
 let standL = [];
+
+let atBarrier = false;
+
 // let jumping = false
 let facingLeft = false
 let facingRight = true
@@ -32,7 +37,9 @@ keyStartTime = null
 
 function preload() {
   music = loadSound("Volnutt/The Air That I Breathe.mp3");
-  stage = loadImage('Volnutt/Placeholder.jpg');
+  stage = loadImage('Volnutt/Background.jpg');
+  platform = loadImage("Volnutt/Foreground.png");
+  obstacle = loadImage("Volnutt/Obstacle.png");
   standR[0] = loadImage('Volnutt/Volnutt0001.png');
   standL[0] = loadImage('Volnutt/VolnuttL1.png');
   run[0] = loadImage('Volnutt/Volnutt0003.png');
@@ -70,10 +77,12 @@ function setup() {
   // stIntro = createGraphics(1280, 740);
   // stIntro.background(0);
   music.loop(0, 1, 1, 11.8, 36);
-  music.setVolume(0.3);
+  music.setVolume(0.5);
 }
 
 function draw(){
+
+  console.log(floor+  ", " + rise + "," + atBarrier);
   background(0);
   image(stage, - stageV , 0);
 //   if(keyActive && millis() - keyStartTime > maxTime){
@@ -225,12 +234,14 @@ function draw(){
   stageV = constrain(stageV, 0, 8389)
   left = constrain(left, -80, 570);     
     if( stageV < 713 && stageV == 0){
-    rise = yElev[0]
-    jump = yElev[0] - 200
-    fall = yElev[0]
+    atBarrier = false
+    floor = 400
+    jump = floor - 200
   }
     if( stageV < 713){
+    atBarrier = false
     rise = yElev[0]
+    floor = yElev[0]
     jump = yElev[0] - 200
   }  
   //   if( stageV <= 713 || stageV >= 1279){
@@ -238,70 +249,81 @@ function draw(){
   //   jump = yElev[1] - 200
   // }
     if( stageV > 713 && stageV < 1279){
-    rise = yElev[1]
-    jump = yElev[1] - 200
-      if(rise < jump){
-     rise ++
+      floor = yElev[1]
+      jump = floor - 200
     }
-  }
+
+    // jump = yElev[1] - 200
+    //   if(rise < jump){
+    //  rise ++
+    // }
     if( stageV > 1343 && stageV < 2094){
-    rise = yElev[2]
+    floor = yElev[2]
     jump = yElev[2] - 200
   } 
      if( stageV > 2094 && stageV < 2831 ){
-    rise = yElev[3]
+    floor = yElev[3]
     jump = yElev[3] - 200
   }
     if( stageV > 2831 && stageV < 3107 ){
-    rise = yElev[4]
+    floor = yElev[4]
     jump = yElev[4] - 200
   } 
     if( stageV > 3107 && stageV < 3388 ){
-    rise = yElev[5]
+    floor = yElev[5]
     jump = yElev[5] - 200
   }
     if( stageV > 3388 && stageV < 3668 ){
-    rise = yElev[6]
+    floor = yElev[6]
     jump = yElev[6] - 200
   } 
     if( stageV > 3668 && stageV < 4389 ){
-    rise = yElev[7]
+    floor = yElev[7]
     jump = yElev[7] - 200
   }
     if( stageV > 4389 && stageV < 4539 ){
-    rise = yElev[8]
+    floor = yElev[8]
     jump = yElev[8] - 200
   } 
     if( stageV > 4539 && stageV < 5204 ){
-    rise = yElev[9]
+    floor = yElev[9]
     jump = yElev[9] - 200
   }
     if( stageV > 5304 && stageV < 5528 ){
-    rise = yElev[10]
+    floor = yElev[10]
     jump = yElev[10] - 200
   } 
     if( stageV > 5528 && stageV < 6324 ){
-    rise = yElev[11]
+    floor = yElev[11]
     jump = yElev[11] - 200
   }
     if( stageV > 6324 && stageV < 6614 ){
-    rise = yElev[12]
+    floor = yElev[12]
     jump = yElev[12] - 200
   } 
     if( stageV > 6614 && stageV < 7369 ){
-    rise = yElev[13]
+    floor = yElev[13]
     jump = yElev[13] - 200
   }
     if( stageV > 7369 && stageV < 8073 ){
-    rise = yElev[14]
+    floor = yElev[14]
     jump = yElev[14] - 200
   } 
     if( stageV > 8073 && stageV < 8469){
-    rise = yElev[15]
+    floor = yElev[15]
     jump = yElev[15] - 200
   }
+
+// ACTIONS
+  if (floor> rise){
+    rise = floor;
+    atBarrier = false;
+  }
+  if (floor < rise){
+      atBarrier = true;
+  }
+
   moveStage()
-  print(stageV)
   if(!keyIsPressed && facingRight ){
     image(standR[0], rightS, rise - 75, 200, 200);   
   }
@@ -327,6 +349,7 @@ function moveStage(){
      if (frameCount % time === 0) {
     newFrame = (newFrame + 1) % runto.length;
     }
+  }
   if(keyIsDown(LEFT_ARROW) === true && stageV < 0) {  
     stageV = 0
     left --
@@ -334,8 +357,6 @@ function moveStage(){
     rightS --
     right --
   }
-
-  }  
   if(keyIsDown(RIGHT_ARROW) === true){
      facingLeft = false
      facingRight = true
@@ -345,8 +366,9 @@ function moveStage(){
      if (frameCount % time === 0) {
     currentFrame = (currentFrame + 1) % run.length;
   }
-    if (right > 584){
-    stageV = stageV+20
+    if (right > 584 && atBarrier == false ){
+      
+      stageV = stageV+20
     }
   }
   if(keyIsDown(RIGHT_ARROW) === true && stageV === 0){
@@ -355,6 +377,7 @@ function moveStage(){
     leftS ++
     left ++
   }
+
   if(keyIsDown(UP_ARROW) === true){
 
     rise = jump
@@ -366,6 +389,6 @@ function moveStage(){
       image(run[currentFrame], right, rise - 75, 200, 200)
     }
   //if(keyisDown(RIGHT_ARROW) === true && keyisDown(UP_ARROW) === true){  }
-
-}
+    
+  }
 }
